@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@shared/services/auth.service';
 
 const LINKS: any[] = [
   { link: '/home', name: 'home', icon: 'home' },
@@ -16,7 +15,7 @@ const LINKS: any[] = [
 })
 export class SidebarComponent implements OnInit {
   public links: any[] = [];
-  constructor(private auth: AuthService) {}
+  constructor() {}
   ngOnInit(): void {
     const linkTemp = JSON.parse(JSON.stringify(LINKS));
     this.links = linkTemp.map((link) => {
@@ -26,6 +25,6 @@ export class SidebarComponent implements OnInit {
   }
 
   logout() {
-    this.auth.logOut();
+    // this.auth.logOut();
   }
 }

@@ -1,4 +1,4 @@
-import 'zone.js/dist/zone-node';
+import 'zone.js/node';
 
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import * as express from 'express';
@@ -7,11 +7,8 @@ import { join } from 'path';
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
-import { REQUEST, RESPONSE } from '@nguniversal/express-engine/tokens';
-import { NgxRequest, NgxResponse } from '@gorniv/ngx-universal';
 import * as compression from 'compression';
 import * as cookieparser from 'cookie-parser';
-import { exit } from 'process';
 
 // for debug
 require('source-map-support').install();
@@ -77,37 +74,11 @@ export function app() {
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
     global['navigator'] = { userAgent: req['headers']['user-agent'] } as Navigator;
-    const http =
-      req.headers['x-forwarded-proto'] === undefined ? 'http' : req.headers['x-forwarded-proto'];
 
     res.render(indexHtml, {
       req,
       providers: [
         { provide: APP_BASE_HREF, useValue: req.baseUrl },
-
-        // for http and cookies
-        {
-          provide: REQUEST,
-          useValue: req,
-        },
-        {
-          provide: RESPONSE,
-          useValue: res,
-        },
-        /// for cookie
-        {
-          provide: NgxRequest,
-          useValue: req,
-        },
-        {
-          provide: NgxResponse,
-          useValue: res,
-        },
-        // for absolute path
-        {
-          provide: 'ORIGIN_URL',
-          useValue: `${http}://${req.headers.host}`,
-        },
       ],
     });
   });
@@ -123,7 +94,7 @@ function run() {
   // gzip
   server.use(compression());
   // cokies
-  server.use(cookieparser());
+  // server.use(cookieparser());
 
   server.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
